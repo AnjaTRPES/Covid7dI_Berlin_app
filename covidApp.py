@@ -6,10 +6,6 @@ Created on Sun Sep 12 17:35:03 2021
 """
 
 import pandas as pd
-from shapely.geometry import polygon
-from shapely.geometry import MultiPolygon
-import geopandas as gpd
-from datetime import timedelta
 from load_data import get_CovidData
 from help_timer_functions import *
 import dash
