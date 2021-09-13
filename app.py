@@ -48,7 +48,8 @@ fig_total_In = px.line(data, x='Datum',
 app = dash.Dash(__name__)
 
 app.layout = html.Div([
-    html.P("Covid 7day incidence in Berlin - timeline"),
+    html.H1("Covid 7day incidence in Berlin - timeline",
+            style={'textAlign':'center'}),
     dcc.Graph(id="choropleth", figure=fig),
     dcc.Slider(id='timeline',
                min=unixTimeMillis(data.Datum.min()),
