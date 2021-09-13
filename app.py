@@ -43,9 +43,12 @@ fig.update_layout(
 
 fig_total_In = px.line(data, x='Datum',
                        y='All_berlin_7dI',
-                       title='Total 7-day incidence of Berlin')
+                       # title='Total 7-day incidence of Berlin',
+                       labels={'All_berlin_7dI': 'Total 7-day incidence in Berlin',
+                               'Datum': 'Date'})
 
 app = dash.Dash(__name__)
+server = app.server
 
 app.layout = html.Div([
     html.H1("Covid 7day incidence in Berlin - timeline",
@@ -81,7 +84,8 @@ def display_choropleth(time, relayoutData, figure):
     fig_total_In = px.line(data,
                            x='Datum',
                            y='All_berlin_7dI',
-                           title='Total 7-day incidence of Berlin')
+                           labels={'All_berlin_7dI': 'Total 7-day incidence in Berlin',
+                                   'Datum': 'Date'})
     fig_total_In.update_layout(shapes=[
         dict(
           type='line',
