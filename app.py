@@ -65,11 +65,12 @@ fig_total_In.update_layout(shapes=[
 
 
 
-app = dash.Dash(__name__)
+app = dash.Dash(__name__,
+                title='Covid-incidence-Berlin')
 server = app.server
 
 app.layout = html.Div([
-    html.H1("Covid 7day incidence in Berlin - timeline",
+    html.H1("Covid 7-day incidence in Berlin - timeline",
             style={'textAlign':'center'}),
     html.Div([
         html.Div([
@@ -112,13 +113,16 @@ app.layout = html.Div([
         ],
         style ={"position":"relative",
                 "top": "0px"}),
-    dcc.Slider(id='timeline',
-               min=unixTimeMillis(data.Datum.min()),
-               max=unixTimeMillis(data.Datum.max()),
-               value=unixTimeMillis(data.Datum.max()),
-               marks=getMarks(data.Datum.min(),
-                           data.Datum.max(),10),
-               included=False,
+    html.Div([
+        dcc.Slider(id='timeline',
+                   min=unixTimeMillis(data.Datum.min()),
+                   max=unixTimeMillis(data.Datum.max()),
+                   value=unixTimeMillis(data.Datum.max()),
+                   marks=getMarks(data.Datum.min(),
+                               data.Datum.max(),10),
+                   included=False)],
+        style={"margin-left":"3.5%",
+               "margin-right": "3.5%"}
                
     ),
     dcc.Graph(id='total_7dIn', figure=fig_total_In)
@@ -160,7 +164,7 @@ def display_choropleth(time, z_min, z_max, relayoutData, figure, figure7dI):
         else:
             figure['layout']['coloraxis']['cmin'] = z_min
             figure['layout']['coloraxis']['cmax'] = z_max
-
+            
     return figure, figure7dI
 
 
@@ -169,7 +173,7 @@ def display_choropleth(time, z_min, z_max, relayoutData, figure, figure7dI):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
 
 
 
