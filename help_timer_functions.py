@@ -31,7 +31,9 @@ def getMarks(start, end, N=20):
     start_unix = unixTimeMillis(start)
     end_unix = unixTimeMillis(end)
 
-    result = {date:str(unixToDatetime(date))[:10] for date in range(start_unix,end_unix,int((end_unix-start_unix)/N))}
+    range_dates = range(start_unix,end_unix,int((end_unix-start_unix)/N))
+    result = {date: {'label': str(unixToDatetime(date))[:10],
+                    'style': {'color': 'lightblue'}} for date in range_dates}
 
     return result
 

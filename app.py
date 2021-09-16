@@ -14,7 +14,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 import plotly.express as px
 
-
+template = 'plotly_dark'
 
 data, bezirksgrenzen, df = get_CovidData()
 
@@ -25,25 +25,28 @@ bezirks = ['Mitte', 'Friedrichshain-Kreuzberg', 'Pankow',
 
 
 max_z = data[['Mitte_7dI', 'Friedrichshain-Kreuzberg_7dI', 'Pankow_7dI',
-'Charlottenburg-Wilmersdorf_7dI', 'Spandau_7dI',
-'Steglitz-Zehlendorf_7dI', 'Tempelhof-Schöneberg_7dI', 'Neukölln_7dI',
-'Treptow-Köpenick_7dI', 'Marzahn-Hellersdorf_7dI', 'Lichtenberg_7dI',
-'Reinickendorf_7dI']].max().max()
+              'Charlottenburg-Wilmersdorf_7dI', 'Spandau_7dI',
+              'Steglitz-Zehlendorf_7dI', 'Tempelhof-Schöneberg_7dI',
+              'Neukölln_7dI',
+              'Treptow-Köpenick_7dI', 'Marzahn-Hellersdorf_7dI',
+              'Lichtenberg_7dI',
+              'Reinickendorf_7dI']].max().max()
 
 # The initial figure
 time = data.Datum.max()
-data_datum_x = data[data.Datum==time]
+data_datum_x = data[data.Datum == time]
 df = pd.DataFrame({'Bezirk': bezirks,
-                   '7dI': [float(data_datum_x[bez+'_7dI']) for bez in bezirks]})
-fig = px.choropleth(#_mapbox(
+                   '7dI': [float(data_datum_x[bez + '_7dI']) for bez in bezirks]})
+fig = px.choropleth(
     df, geojson=bezirksgrenzen, color='7dI',
     color_continuous_scale="Viridis",
-    locations="Bezirk", 
+    locations="Bezirk",
     range_color=(0, max_z),
-    labels={'7dI':'7 day incidence rate'})
+    labels={'7dI': '7 day \nincidence'})
 fig.update_geos(fitbounds="locations", visible=False)
 fig.update_layout(
-    margin={"r": 0, "t": 0, "l": 0, "b": 0},)
+    margin={"r": 0, "t": 0, "l": 0, "b": 0},
+    template=template)
 
 fig_total_In = px.line(data, x='Datum',
                        y='All_berlin_7dI',
@@ -56,7 +59,11 @@ fig_total_In.update_layout(shapes=[
           yref='paper', y0=0, y1=1,
           xref='x', x0=time, x1=time
         )
-    ])
+    ], template=template)
+
+
+
+
 
 app = dash.Dash(__name__)
 server = app.server
@@ -64,56 +71,135 @@ server = app.server
 app.layout = html.Div([
     html.H1("Covid 7day incidence in Berlin - timeline",
             style={'textAlign':'center'}),
-    dcc.Graph(id="choropleth", figure=fig),
+    html.Div([
+        html.Div([
+            dcc.Graph(id="choropleth", figure=fig),],
+            style={"width": "80%", "display": "inline-block",
+                   "height": "100%"}),
+        html.Div([
+            html.Div([
+                dcc.Input(id="z_max",
+                          type="number",
+                          placeholder="Max 7day incidence",
+                          value=int(max_z),
+                          style={"width": "18%",
+                                 "display": "inline-block"}),
+                html.Div(['Max 7day incidence'],
+                         style={"width": "50%",
+                                "display": "inline-block",
+                                "margin-left": "2px"})
+                ],
+                style={"position": "absolute",
+                       "top": "10px"}),
+            html.Div([
+                dcc.Input(id="z_min",
+                          type="number",
+                          placeholder="max 7day incidence",
+                          value=int(0),
+                          style={"width": "18%",
+                                 "display": "inline-block"}),
+                html.Div(['Min 7day incidence'],
+                         style={"width": "50%",
+                                "display": "inline-block",
+                                "margin-left": "2px"})],
+                style={"position":"absolute",
+                       "bottom": "1px"}
+                )],
+                 style={"width":"19%","display": "inline-block",
+                        "height": "100%",
+                        "position":"absolute",
+                        "top":"0px"})
+        ],
+        style ={"position":"relative",
+                "top": "0px"}),
     dcc.Slider(id='timeline',
                min=unixTimeMillis(data.Datum.min()),
                max=unixTimeMillis(data.Datum.max()),
                value=unixTimeMillis(data.Datum.max()),
                marks=getMarks(data.Datum.min(),
                            data.Datum.max(),10),
+               included=False,
+               
     ),
     dcc.Graph(id='total_7dIn', figure=fig_total_In)
     
-])
+], style={'height': "99%"})
+
+
+
 
 @app.callback(
     [Output("choropleth", "figure"),
      Output('total_7dIn', 'figure')],
-    [Input("timeline", "value")],
+    [Input("timeline", "value"),
+     Input("z_min", "value"),
+     Input("z_max", "value")],
     [State('choropleth', 'relayoutData'),
      State('choropleth', 'figure'),
-     State('total_7dIn','figure')]
+     State('total_7dIn', 'figure')]
 )
+def display_choropleth(time, z_min, z_max, relayoutData, figure, figure7dI):
+    # determine which input was triggerd
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        pass
+    else:
+        if ctx.triggered[0]['prop_id'] == 'timeline.value':
+            time = unixToDatetime(time)
+            data_datum_x = data[data.Datum == time]
+            z_new = [float(data_datum_x[bez+'_7dI']) for bez in bezirks]
+            figure['data'][0]['z'] = z_new
+            figure7dI['layout']['shapes'] = [
+                dict(
+                  type='line',
+                  yref='paper', y0=0, y1=1,
+                  xref='x', x0=time, x1=time
+                )
+            ]
+        else:
+            figure['layout']['coloraxis']['cmin'] = z_min
+            figure['layout']['coloraxis']['cmax'] = z_max
 
-def display_choropleth(time, relayoutData, figure, figure7dI):
-    time = unixToDatetime(time)
-    data_datum_x = data[data.Datum==time]
-    z_new = [float(data_datum_x[bez+'_7dI']) for bez in bezirks]
-    figure['data'][0]['z'] = z_new
-    fig = figure
-    '''
-    print(type(figure7dI))
-    print(figure7dI.keys())
-    print(figure7dI['data'][0].keys())
-    print(figure7dI['data'][0]['line'])
-    #print(figure7dI['data'][0].keys())
-    print(figure7dI['layout'].keys())
-    print(figure7dI['layout']['template'].keys())
-    print(figure7dI['layout']['template']['data'].keys())
-    print(figure7dI['layout']['template']['layout'].keys())
-    print(figure7dI['layout']['template']['layout']['scene'])
-    '''    
+    return figure, figure7dI
 
-    figure7dI['layout']['shapes'] = [
-        dict(
-          type='line',
-          yref='paper', y0=0, y1=1,
-          xref='x', x0=time, x1=time
-        )
-    ]
 
-    return fig, figure7dI
+
+    
 
 
 if __name__ == '__main__':
     app.run_server(debug=False)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
