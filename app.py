@@ -139,6 +139,7 @@ app.layout = html.Div([
      State('total_7dIn', 'figure')]
 )
 def display_choropleth(time, z_min, z_max, relayoutData, figure, figure7dI):
+    print('triggered the callback')
     # determine which input was triggerd
     ctx = dash.callback_context
     if not ctx.triggered:
@@ -168,7 +169,7 @@ def display_choropleth(time, z_min, z_max, relayoutData, figure, figure7dI):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
 
 
 
