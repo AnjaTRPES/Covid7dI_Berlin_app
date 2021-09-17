@@ -70,11 +70,20 @@ app = dash.Dash(__name__,
 server = app.server
 
 app.layout = html.Div([
-    html.H1("Covid 7-day incidence in Berlin - timeline",
-            style={'textAlign':'center'}),
+    html.Div([
+        html.H1("Covid 7-day incidence in Berlin - timeline",
+                style={'textAlign': 'center', 'width': "80%", 
+                       "display": "inline-block"}),
+        html.Label(["Created by ",
+                    html.A("Anja", href='https://github.com/AnjaTRPES/Covid7dI_Berlin_app'),
+                    " using ",
+                    html.A("Dash and Plotly", href='https://plotly.com/dash/')
+                    ],
+               style={"width": "18%","display": "inline-block"})
+    ]),
     html.Div([
         html.Div([
-            dcc.Graph(id="choropleth", figure=fig),],
+            dcc.Graph(id="choropleth", figure=fig)],
             style={"width": "80%", "display": "inline-block",
                    "height": "100%"}),
         html.Div([
@@ -173,7 +182,7 @@ def display_choropleth(time, z_min, z_max, relayoutData, figure, figure7dI):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
 
 
 
