@@ -154,11 +154,14 @@ app.layout = html.Div([
 def display_choropleth(time, z_min, z_max, relayoutData, figure, figure7dI):
     print('triggered the callback', flush=True)
     # determine which input was triggerd
-    # ctx = dash.callback_context
-    '''
+    ctx = dash.callback_context
+    print(ctx)
     if not ctx.triggered:
-        pass
+        print('wasnt triggered')
+        #pass
     else:
+        print('apparantly was triggered!')
+        print(ctx.triggered)
         if ctx.triggered[0]['prop_id'] == 'timeline.value':
             time = unixToDatetime(time)
             data_datum_x = data[data.Datum == time]
@@ -188,6 +191,7 @@ def display_choropleth(time, z_min, z_max, relayoutData, figure, figure7dI):
     ]
     figure['layout']['coloraxis']['cmin'] = z_min
     figure['layout']['coloraxis']['cmax'] = z_max
+    '''
     return figure, figure7dI
 
 
@@ -196,7 +200,7 @@ def display_choropleth(time, z_min, z_max, relayoutData, figure, figure7dI):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
 
 
 
