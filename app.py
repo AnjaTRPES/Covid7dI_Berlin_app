@@ -13,9 +13,11 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 import plotly.express as px
+import sys
 
 
 print("starting app")
+sys.stdout.flush()
 
 template = 'plotly_dark'
 
@@ -172,6 +174,7 @@ app.layout = html.Div([
 )
 def display_choropleth(time, z_min, z_max, relayoutData, figure, figure7dI):
     print('triggered the callback')
+    sys.stdout.flush()
     # determine which input was triggerd
     '''
     ctx = dash.callback_context
