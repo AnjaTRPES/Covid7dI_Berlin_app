@@ -13,7 +13,16 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 import plotly.express as px
+import logging
+logging.basicConfig(
+    level=logging.INFO,
+    filename='app.log',
+    format=
+    '%(asctime)s [%(levelname)s] [%(pathname)s line %(lineno)d @%(thread)d] - %(message)s '
+)
+logger = logging.getLogger(__name__)
 
+logger.info("Starting the logger")
 template = 'plotly_dark'
 
 data, bezirksgrenzen, df = get_CovidData()
@@ -168,6 +177,7 @@ app.layout = html.Div([
      State('total_7dIn', 'figure')]
 )
 def display_choropleth(time, z_min, z_max, relayoutData, figure, figure7dI):
+    logger.info("starting the callback")
     print('triggered the callback')
     # determine which input was triggerd
     '''
@@ -195,20 +205,23 @@ def display_choropleth(time, z_min, z_max, relayoutData, figure, figure7dI):
             figure['layout']['coloraxis']['cmin'] = z_min
             figure['layout']['coloraxis']['cmax'] = z_max
     '''
-    time = unixToDatetime(time)
-    data_datum_x = data[data.Datum == time]
-    z_new = [float(data_datum_x[bez+'_7dI']) for bez in bezirks]
-    figure['data'][0]['z'] = z_new
-    figure7dI['layout']['shapes'] = [
-        dict(
-          type='line',
-          yref='paper', y0=0, y1=1,
-          xref='x', x0=time, x1=time
-        )
-    ]
-    figure['layout']['coloraxis']['cmin'] = z_min
-    figure['layout']['coloraxis']['cmax'] = z_max
-    return figure, figure7dI
+    try:
+        time = unixToDatetime(time)
+        data_datum_x = data[data.Datum == time]
+        z_new = [float(data_datum_x[bez+'_7dI']) for bez in bezirks]
+        figure['data'][0]['z'] = z_new
+        figure7dI['layout']['shapes'] = [
+            dict(
+              type='line',
+              yref='paper', y0=0, y1=1,
+              xref='x', x0=time, x1=time
+            )
+        ]
+        figure['layout']['coloraxis']['cmin'] = z_min
+        figure['layout']['coloraxis']['cmax'] = z_max
+        return figure, figure7dI
+    except:
+        return figure, figure7dI
 
 
 
@@ -216,7 +229,7 @@ def display_choropleth(time, z_min, z_max, relayoutData, figure, figure7dI):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
 
 
 
