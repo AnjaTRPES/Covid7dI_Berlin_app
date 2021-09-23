@@ -216,7 +216,7 @@ def display_choropleth(time, z_min, z_max, relayoutData, figure, figure7dI):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
 
 
 
