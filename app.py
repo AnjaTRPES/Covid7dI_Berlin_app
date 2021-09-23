@@ -102,6 +102,22 @@ app.layout = html.Div([
                 style={"position": "absolute",
                        "top": "10px"}),
             html.Div([
+                html.P("Explanation\n",
+                       style={"text-decoration": "underline",
+                              "margin": "2px"}),
+                html.Label([
+                "This dashboard shows the 7-day-incidence of the different \
+                districts of Berlin for a given day, based on the data \
+                    available on ",
+                html.A("Berlin-open-datasets", 
+                       href='https://www.berlin.de/lageso/gesundheit/infektionskrankheiten/corona/tabelle-bezirke-gesamtuebersicht/'
+                       ),
+                ". The 7-day-incidence refers to the mean of reported Covid \
+                    cases during the last 7 days."
+                    ]),
+                ],
+                className="divBorder"),
+            html.Div([
                 dcc.Input(id="z_min",
                           type="number",
                           placeholder="max 7day incidence",

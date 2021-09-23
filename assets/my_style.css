@@ -10,7 +10,19 @@ a{
     color: magenta;
 }
 
-
 #timeline {
     color: pink;
+}
+
+.divBorder{
+    position: absolute;
+    top: 70px;
+    outline: solid;
+    outline-offset: 3px;
+    outline-color: lightblue;
+    outline-width: 2px;
+    border-width: 2px;
+    border-color: lightblue;
+    width: 80%;
+    
 }
