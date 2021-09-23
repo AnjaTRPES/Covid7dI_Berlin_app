@@ -10,4 +10,3 @@ pyproj==2.6.0
 dash_core_components==1.13.0
 numpy==1.19.3
 dash_html_components==1.1.1
-logging==0.5.1.2

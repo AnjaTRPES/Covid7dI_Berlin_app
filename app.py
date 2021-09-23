@@ -13,16 +13,10 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 import plotly.express as px
-import logging
-logging.basicConfig(
-    level=logging.INFO,
-    filename='app.log',
-    format=
-    '%(asctime)s [%(levelname)s] [%(pathname)s line %(lineno)d @%(thread)d] - %(message)s '
-)
-logger = logging.getLogger(__name__)
 
-logger.info("Starting the logger")
+
+print("starting app")
+
 template = 'plotly_dark'
 
 data, bezirksgrenzen, df = get_CovidData()
@@ -177,7 +171,6 @@ app.layout = html.Div([
      State('total_7dIn', 'figure')]
 )
 def display_choropleth(time, z_min, z_max, relayoutData, figure, figure7dI):
-    logger.info("starting the callback")
     print('triggered the callback')
     # determine which input was triggerd
     '''
