@@ -67,9 +67,6 @@ fig_total_In.update_layout(shapes=[
     ], template=template)
 
 
-
-
-
 app = dash.Dash(__name__,
                 title='Covid-incidence-Berlin')
 server = app.server
@@ -77,14 +74,15 @@ server = app.server
 app.layout = html.Div([
     html.Div([
         html.H1("Covid 7-day incidence in Berlin - timeline",
-                style={'textAlign': 'center', 'width': "80%", 
+                style={'textAlign': 'center', 'width': "80%",
                        "display": "inline-block"}),
         html.Label(["Created by ",
-                    html.A("Anja", href='https://github.com/AnjaTRPES/Covid7dI_Berlin_app'),
+                    html.A("Anja",
+                           href='https://github.com/AnjaTRPES/Covid7dI_Berlin_app'),
                     " using ",
                     html.A("Dash and Plotly", href='https://plotly.com/dash/')
                     ],
-               style={"width": "18%","display": "inline-block"})
+                   style={"width": "18%", "display": "inline-block"})
     ]),
     html.Div([
         html.Div([
@@ -108,11 +106,11 @@ app.layout = html.Div([
                        "top": "10px"}),
             html.Div([
                 html.P("Explanation\n",
-                        style={"text-decoration": "underline",
+                       style={"text-decoration": "underline",
                               "margin": "2px"}),
                 html.Label([
-                "This dashboard shows the 7-day-incidence of the different \
-                districts of Berlin for a given day, based on the data \
+                    "This dashboard shows the 7-day-incidence of the different \
+                    districts of Berlin for a given day, based on the data \
                     available on ",
                 html.A("Berlin-open-datasets", 
                         href='https://www.berlin.de/lageso/gesundheit/infektionskrankheiten/corona/tabelle-bezirke-gesamtuebersicht/'
@@ -133,33 +131,27 @@ app.layout = html.Div([
                          style={"width": "50%",
                                 "display": "inline-block",
                                 "margin-left": "2px"})],
-                style={"position":"absolute",
-                       "bottom": "1px"}
-                )],
-                 style={"width":"19%","display": "inline-block",
+                    style={"position": "absolute", "bottom": "1px"}
+                    )],
+                 style={"width": "19%", "display": "inline-block",
                         "height": "100%",
-                        "position":"absolute",
-                        "top":"0px"})
+                        "position": "absolute",
+                        "top": "0px"})
         ],
-        style ={"position":"relative",
-                "top": "0px"}),
+        style={"position": "relative",
+               "top": "0px"}),
     html.Div([
         dcc.Slider(id='timeline',
                    min=unixTimeMillis(data.Datum.min()),
                    max=unixTimeMillis(data.Datum.max()),
                    value=unixTimeMillis(data.Datum.max()),
                    marks=getMarks(data.Datum.min(),
-                               data.Datum.max(),10),
+                                  data.Datum.max(), 10),
                    included=False)],
-        style={"margin-left":"3.5%",
-               "margin-right": "3.5%"}
-               
-    ),
+        style={"margin-left": "3.5%", "margin-right": "3.5%"}         
+        ),
     dcc.Graph(id='total_7dIn', figure=fig_total_In)
-    
 ], style={'height': "99%"})
-
-
 
 
 @app.callback(
@@ -175,32 +167,7 @@ app.layout = html.Div([
 def display_choropleth(time, z_min, z_max, relayoutData, figure, figure7dI):
     print('triggered the callback')
     sys.stdout.flush()
-    # determine which input was triggerd
-    '''
-    ctx = dash.callback_context
-    # print(ctx)
-    if not ctx.triggered:
-        print('wasnt triggered')
-        #pass
-    else:
-        # print('apparantly was triggered!')
-        # print(ctx.triggered)
-        if ctx.triggered[0]['prop_id'] == 'timeline.value':
-            time = unixToDatetime(time)
-            data_datum_x = data[data.Datum == time]
-            z_new = [float(data_datum_x[bez+'_7dI']) for bez in bezirks]
-            figure['data'][0]['z'] = z_new
-            figure7dI['layout']['shapes'] = [
-                dict(
-                  type='line',
-                  yref='paper', y0=0, y1=1,
-                  xref='x', x0=time, x1=time
-                )
-            ]
-        else:
-            figure['layout']['coloraxis']['cmin'] = z_min
-            figure['layout']['coloraxis']['cmax'] = z_max
-    '''
+
     try:
         time = unixToDatetime(time)
         data_datum_x = data[data.Datum == time]
@@ -218,10 +185,6 @@ def display_choropleth(time, z_min, z_max, relayoutData, figure, figure7dI):
         return figure, figure7dI
     except:
         return figure, figure7dI
-
-
-
-    
 
 
 if __name__ == '__main__':
